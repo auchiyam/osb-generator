@@ -1,0 +1,6 @@
+D:\Document\Productions\Programming\C#\osb generator\osb generator\bin\Debug\osb generator.exe.config
+D:\Document\Productions\Programming\C#\osb generator\osb generator\bin\Debug\osb generator.exe
+D:\Document\Productions\Programming\C#\osb generator\osb generator\bin\Debug\osb generator.pdb
+D:\Document\Productions\Programming\C#\osb generator\osb generator\obj\Debug\osb generator.csprojResolveAssemblyReference.cache
+D:\Document\Productions\Programming\C#\osb generator\osb generator\obj\Debug\osb generator.exe
+D:\Document\Productions\Programming\C#\osb generator\osb generator\obj\Debug\osb generator.pdb
