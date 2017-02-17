@@ -49,9 +49,12 @@ namespace osb_generator.generator
 
         public void Run()
         {
+            System.Console.WriteLine("Initializing...");
             Initialize();
             InitializeRest();
+            System.Console.WriteLine("Creating layers...");
             SetLayers();
+            System.Console.WriteLine("Executing main program...");
             MainCode();
             Generate.GenerateOSB(this, location);
         }

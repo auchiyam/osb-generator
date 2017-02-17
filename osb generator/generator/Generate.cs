@@ -15,6 +15,7 @@ namespace osb_generator.generator
             var osb = "[Events]\r\n//Background and Video events\r\n//Storyboard Layer 0 (Background)\r\n";
             for (var i = 0; i < h.Count; i++)
             {
+                System.Console.WriteLine($"Writing layer {h[i]}");
                 while (s.Layers[h[i]].Count > 0)
                 {
                     osb += s.Layers[h[i]].Dequeue();

@@ -68,7 +68,7 @@ namespace osb_generator.generator
                     {
                         throw new Exception($"The command overlaps with other command.\n{list[i].Duration} | {c.Duration}");
                     }
-                    else if (list[i].Duration.EndTime < c.Duration.StartTime)
+                    else if (list[i].Duration.EndTime <= c.Duration.StartTime)
                     {
                         list.Add(c);
                         break;

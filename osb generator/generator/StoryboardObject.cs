@@ -42,17 +42,12 @@ namespace osb_generator.generator
         protected Origin origin;
         protected int indentation;
         protected int fps;
+        protected List<Loop> loops;
 
         protected StoryboardObject() { }
-
-        public StoryboardObject(string i) : this(i, Origin.Centre, 10)
-        {
-            
-        }
-
+        public StoryboardObject(string i) : this(i, Origin.Centre, 10) { }
         public StoryboardObject(string i, int fps) : this(i, Origin.Centre, fps) { }
         public StoryboardObject(string i, Origin o) : this(i, o, 10) { }
-
         public StoryboardObject(string i, Origin o, int fps)
         {
             image = i;
@@ -60,6 +55,7 @@ namespace osb_generator.generator
             origin = o;
             indentation = 0;
             this.fps = fps;
+            loops = new List<Loop>();
         }
 
         #region Command
@@ -323,6 +319,22 @@ namespace osb_generator.generator
             timeline.AddCommand(new Additive());
         }
 
+        //value
+        public void Flip(string type) => Flip(new Time(0), new Time(0), type);
+
+        //start, value
+        public void Flip(double start, string type) => Flip(new Time(start), new Time(start), type);
+
+        public void Flip(Time t, string type) => Flip(t, t, type);
+
+        //start, end, value
+        public void Flip(double a, double b, string type) => Flip(new Time(a), new Time(b), type);
+
+        public void Flip(Time a, Time b, string type)
+        {
+            timeline.AddCommand(new Flip(new Interval(a, b), type));
+        }
+
         #endregion
         #endregion
 
@@ -455,22 +467,30 @@ namespace osb_generator.generator
 
         public Loop CreateLoop(Time start, int loops)
         {
-            return new Loop(indentation + 1, start, loops);
+            var l = new Loop(indentation + 1, start, loops);
+            this.loops.Add(l);
+            return l;
         }
 
         public Loop CreateLoop(double start, int loops)
         {
-            return new Loop(indentation + 1, new Time(start), loops);
+            var l = new Loop(indentation + 1, new Time(start), loops);
+            this.loops.Add(l);
+            return l;
         }
 
         public Loop CreateLoop(double start, int loops, int fps)
         {
-            return new Loop(indentation + 1, new generator.Time(start), loops, fps);
+            var l = new Loop(indentation + 1, new generator.Time(start), loops, fps);
+            this.loops.Add(l);
+            return l;
         }
 
         public Loop CreateLoop(Time start, int loops, int fps)
         {
-            return new Loop(indentation + 1, start, loops, fps);
+            var l = new Loop(indentation + 1, start, loops, fps);
+            this.loops.Add(l);
+            return l;
         }
 
         public string PrintTimeline()
@@ -482,7 +502,7 @@ namespace osb_generator.generator
             {
                 for (var i = 0; i < l.Count; i++)
                 {
-                    if (l[i].GetType() == typeof(Command) || l[i].GetType() == typeof(Additive))
+                    if (l[i].GetType() == typeof(Command) || l[i].GetType() == typeof(Additive) || l[i].GetType() == typeof(Flip))
                     {
                         s += $"{indent} {l[i]}";
                     }
@@ -493,6 +513,10 @@ namespace osb_generator.generator
                     }
                     s += "\r\n";
                 }
+            }
+            foreach (var loop in loops)
+            {
+                s += loop;
             }
             return s;
         }
@@ -515,21 +539,41 @@ namespace osb_generator.generator
 
     class Loop : StoryboardObject
     {
-        private Time StartTime;
+        public Time StartTime, EndTime;
         private int LoopCount;
         public Loop(int ind, Time start, int loops) : this(ind, start, loops, 25) { }
         public Loop(int ind, Time start, int loops, int fps)
         {
             this.indentation = ind;
             this.StartTime = start;
+            this.EndTime = start;
             this.LoopCount = loops;
             this.fps = fps;
+            this.timeline = new Timeline();
+            this.loops = new List<Loop>();
+        }
+
+        public void UpdateTime()
+        {
+            var l = timeline.Lists();
+            var end = new Time(0);
+            foreach (var u in l.Values)
+            {
+                for (var i = 0; i < u.Count; i++)
+                {
+                    if (u[i].EndTime > end)
+                    {
+                        end = u[i].EndTime;
+                    }
+                }
+            }
+            this.EndTime = end;
         }
 
         public override string ToString()
         {
             var indent = String.Concat(Enumerable.Repeat(" ", indentation));
-            var s = indent + $"L,{StartTime.OSBTime},{LoopCount}";
+            var s = indent + $"L,{StartTime.OSBTime},{LoopCount}\r\n";
             s += PrintTimeline();
             return s;
         }
@@ -538,7 +582,7 @@ namespace osb_generator.generator
     class LoopType
     {
         private string s;
-        public static readonly LoopType LoopOnce = new LoopType("LoopOne");
+        public static readonly LoopType LoopOnce = new LoopType("LoopOnce");
         public static readonly LoopType LoopForever = new LoopType("LoopForever");
 
         private LoopType(string t)
@@ -555,38 +599,38 @@ namespace osb_generator.generator
     class Animation : StoryboardObject
     {
         private int FrameCount, FrameInterval;
-        private LoopType loops;
+        private LoopType looptype;
         public Animation(string i, int frames, int delay, LoopType l) : base(i)
         {
             this.FrameCount = frames;
             this.FrameInterval = delay;
-            this.loops = l;
+            this.looptype = l;
         }
 
         public Animation(string i, int frames, int delay, LoopType l, int fps) : base(i, fps)
         {
             this.FrameCount = frames;
             this.FrameInterval = delay;
-            this.loops = l;
+            this.looptype = l;
         }
 
         public Animation(string i, Origin o, int frames, int delay, LoopType l) : base(i, o)
         {
             this.FrameCount = frames;
             this.FrameInterval = delay;
-            this.loops = l;
+            this.looptype = l;
         }
 
         public Animation(string i, Origin o, int frames, int delay, LoopType l, int fps) : base(i, o, fps)
         {
             this.FrameCount = frames;
             this.FrameInterval = delay;
-            this.loops = l;
+            this.looptype = l;
         }
 
         public override string ToString()
         {
-            var s = $"Animation,Background,{origin},{image},320,240{FrameCount},{FrameInterval},{loops}\r\n";
+            var s = $"Animation,Background,{origin},{image},320,240{FrameCount},{FrameInterval},{looptype}\r\n";
             s += PrintTimeline();
             return s;
         }

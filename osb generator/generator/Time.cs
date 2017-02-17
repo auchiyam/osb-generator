@@ -102,7 +102,7 @@ namespace osb_generator.generator
 
         public static bool operator !=(Time a, Time b)
         {
-            return !(a == b);
+            return !a.Equals(b);
         }
 
         public static bool operator <=(Time a, Time b)
@@ -117,14 +117,11 @@ namespace osb_generator.generator
 
         public override bool Equals(object obj)
         {
-            try
-            {
-                var t = (Time)obj;
-                return t.OSBTime == this.OSBTime;
-            } catch (NullReferenceException e)
-            {
+            if (obj == null || GetType() != obj.GetType())
                 return false;
-            }
+
+            var t = (Time)obj;
+            return t.OSBTime == this.OSBTime;
         }
     }
 

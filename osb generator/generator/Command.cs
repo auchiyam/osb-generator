@@ -213,4 +213,38 @@ namespace osb_generator.generator
             return "P,0,0,0,A";
         }
     }
+
+    class Flip : CommandObject
+    {
+        string fliptype;
+        public Flip(Interval duration, string type)
+        {
+            this.type = CommandType.Parameter;
+            this.ease = 0;
+            this.duration = duration;
+            this.starttime = duration.StartTime;
+            this.endtime = duration.EndTime;
+            this.fliptype = type;
+        }
+
+        public override Value GetValue(Time t)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Value GetValue(double t)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Value GetValue(double min, double sec, double millisec)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override string ToString()
+        {
+            return $"P,0,{starttime},{endtime},{fliptype}";
+        }
+    }
 }
