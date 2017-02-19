@@ -84,13 +84,36 @@ namespace osb_generator.generator
 
         public override Value GetValue(Time t)
         {
-            return Easing.CalculateEase(this.Ease, this.endvalue - this.startvalue, t.OSBTime, duration.Length.OSBTime, this.startvalue);
+            if (duration.Length.OSBTime > 0)
+                return Easing.CalculateEase(this.Ease, this.endvalue - this.startvalue, t.OSBTime - starttime.OSBTime, duration.Length.OSBTime, this.startvalue);
+            else
+                return this.startvalue;
         }
         #endregion
 
         public override string ToString()
         {
-            return $"{type},{(int)ease},{starttime},{endtime},{startvalue},{endvalue}";
+            string a = startvalue.ToString() + ",";
+            string b = endvalue.ToString();
+
+            string s = starttime.ToString();
+            string e = endtime.ToString();
+            if (type.Equals(CommandType.Rotate))
+            {
+                var q = (Angle)(startvalue);
+                var w = (Angle)(endvalue);
+                a = q.ToString() + ",";
+                b = w.ToString();
+            }
+
+            if (startvalue.Equals(endvalue))
+            {
+                a = a.Substring(0, a.Length - 1);
+                e = "";
+                b = "";
+            }
+
+            return $"{type},{(int)ease},{starttime},{endtime},{a}{b}";
         }
     }
 

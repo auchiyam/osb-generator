@@ -8,19 +8,19 @@ namespace osb_generator.generator
 {
     class Layer
     {
-        public Dictionary<string, Queue<StoryboardObject>> Layers;
+        public Dictionary<string, List<StoryboardObject>> Layers;
         private List<string> order;
         private int count;
 
         public Layer()
         {
-            Layers = new Dictionary<string, Queue<StoryboardObject>>();
+            Layers = new Dictionary<string, List<StoryboardObject>>();
             order = new List<string>();
             count = 0;
-            Layers["general"] = new Queue<StoryboardObject>();
+            Layers["general"] = new List<StoryboardObject>();
         }
 
-        public Queue<StoryboardObject> this[string s]
+        public List<StoryboardObject> this[string s]
         {
             get
             {
@@ -33,7 +33,7 @@ namespace osb_generator.generator
             if (!Layers.Keys.Contains(s))
             {
                 order.Add(s);
-                Layers[s] = new Queue<StoryboardObject>();
+                Layers[s] = new List<StoryboardObject>();
                 count++;
             }
             else
@@ -56,7 +56,7 @@ namespace osb_generator.generator
             Sprite s = new Sprite(image, o, fps);
             if (Layers.Keys.Contains(layer))
             {
-                Layers[layer].Enqueue(s);
+                Layers[layer].Add(s);
             }
             else
             {
@@ -71,7 +71,7 @@ namespace osb_generator.generator
             {
                 foreach (var spr in s)
                 {
-                    Layers[layer].Enqueue(spr);
+                    Layers[layer].Add(spr);
                 }
             }
             else
@@ -90,7 +90,7 @@ namespace osb_generator.generator
             Animation s = new Animation(image, o, framecount, frameinterval, loop, fps);
             if (Layers.Keys.Contains(layer))
             {
-                Layers[layer].Enqueue(s);
+                Layers[layer].Add(s);
             }
             else
             {
@@ -103,7 +103,7 @@ namespace osb_generator.generator
         {
             if (Layers.Keys.Contains(layer))
             {
-                Layers[layer].Enqueue(s);
+                Layers[layer].Add(s);
             }
             else
             {

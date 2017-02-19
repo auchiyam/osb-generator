@@ -14,11 +14,13 @@ namespace osb_generator.generator
             GenerateLine(loc);
         }
 
-        public static Sprite Line(double width, double height) => Line(height, width, Origin.Centre);
-        public static Sprite Line(double width, double height, Origin o)
+        public static Sprite Line(double width, double height) => Line(0, width, height);
+        public static Sprite Line(double width, double height, Origin o) => Line(0, width, height, o);
+        public static Sprite Line(double start, double width, double height) => Line(start, height, width, Origin.Centre);
+        public static Sprite Line(double start, double width, double height, Origin o)
         {
             Sprite a = new Sprite("sb/etc/line", o);
-            a.Vector(new VectorSize(width / 9, height / 9));
+            a.Vector(start, new VectorSize(width / 9, height / 9));
             return a;
         }
 

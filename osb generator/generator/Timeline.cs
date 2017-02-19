@@ -68,12 +68,8 @@ namespace osb_generator.generator
                     {
                         throw new Exception($"The command overlaps with other command.\n{list[i].Duration} | {c.Duration}");
                     }
-                    else if (list[i].Duration.EndTime <= c.Duration.StartTime)
-                    {
-                        list.Add(c);
-                        break;
-                    }
                 }
+                list.Add(c);
             }
             else
             {
@@ -91,16 +87,20 @@ namespace osb_generator.generator
         {
             var lists = Lists();
             var r = new Dictionary<CommandType, Value>();
+            Value currValue = null;
             foreach (var l in lists)
             {
-                foreach (var v in l.Value)
+                for (var i = 0; i < l.Value.Count; i++)
                 {
-                    if (v.StartTime <= t && t <= v.StartTime)
-                    {
-                        r[l.Key] = v.GetValue(t);
+                    if (t < l.Value[i].StartTime)
                         break;
-                    }
+                    else if (l.Value[i].StartTime <= t && t <= l.Value[i].EndTime)
+                        currValue = l.Value[i].GetValue(t);
+                    else
+                        currValue = l.Value[i].GetValue(l.Value[i].EndTime);
                 }
+                if (currValue != null)
+                    r[l.Key] = currValue;
             }
             return r;
         }

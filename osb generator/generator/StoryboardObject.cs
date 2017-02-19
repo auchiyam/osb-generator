@@ -573,7 +573,7 @@ namespace osb_generator.generator
         public override string ToString()
         {
             var indent = String.Concat(Enumerable.Repeat(" ", indentation));
-            var s = indent + $"L,{StartTime.OSBTime},{LoopCount}\r\n";
+            var s = indent + $"L,{Math.Floor(StartTime.OSBTime)},{LoopCount}\r\n";
             s += PrintTimeline();
             return s;
         }

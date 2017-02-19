@@ -297,7 +297,7 @@ namespace osb_generator.generator
 
         public override string ToString()
         {
-            return $"{a:0.#####}";
+            return $"{Radian:0.#####}";
         }
 
         public override Value Subtract(Value b)
